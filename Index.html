@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Samarjit — Hacker-style Page</title>
+  <style>
+    /* Reset */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+
+    /* Background: purple gradient */
+    body{
+      background: linear-gradient(135deg,#2b0036 0%, #43005a 50%, #1a0026 100%);
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      overflow:hidden;
+      color:#fff;
+    }
+
+    /* Matrix-style canvas overlay */
+    canvas#rain{
+      position:fixed;inset:0;pointer-events:none;mix-blend-mode:screen;opacity:0.45;
+    }
+
+    /* Center content */
+    .center{
+      position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;
+      z-index:2;padding:2rem;
+    }
+
+    .card{
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.06);
+      padding:3rem 4rem;border-radius:18px;backdrop-filter:blur(6px);
+      box-shadow:0 10px 30px rgba(0,0,0,0.6);
+      text-align:center;max-width:900px;width:100%;
+    }
+
+    h1{
+      font-size:clamp(40px,12vw,120px);letter-spacing:4px;margin-bottom:0.2rem;
+      color: #a8fffb; /* neon-ish cyan */
+      text-shadow:0 0 20px rgba(168,255,251,0.18), 0 4px 30px rgba(0,0,0,0.6);
+      transform:translateZ(0);
+    }
+
+    p.lead{
+      margin-top:0.5rem;font-size:1.05rem;color: #f8f1ff;opacity:0.9;
+    }
+
+    /* Glowing underline to look 'hacky' */
+    .glow-line{
+      height:6px;width:120px;margin:20px auto 0;border-radius:999px;
+      background:linear-gradient(90deg,#c86cff,#6ef0ff,#c86cff);
+      box-shadow:0 0 24px rgba(110,240,255,0.18),0 0 36px rgba(200,108,255,0.12);
+    }
+
+    /* small footer note */
+    .note{margin-top:1rem;font-size:0.9rem;color:rgba(255,255,255,0.8)}
+
+    /* Responsive tweak */
+    @media (max-width:520px){
+      .card{padding:2rem}
+      h1{font-size:48px}
+    }
+  </style>
+</head>
+<body>
+  <canvas id="rain"></canvas>
+  <div class="center">
+    <div class="card" role="main">
+      <h1>HACKER</h1>
+      <div class="glow-line"></div>
+      <p class="lead">This is a hacker.“Your mobile has been hacked. ” </p>
+      <p class="note">Tip:You may now receive OTPs or calls on your phone because you clicked on a suspicious link. </p>
+    </div>
+  </div>
+
+  <script>
+    // Matrix-like falling characters on a purple background
+    (function(){
+      const canvas = document.getElementById('rain');
+      const ctx = canvas.getContext('2d');
+      let w = canvas.width = innerWidth;
+      let h = canvas.height = innerHeight;
+
+      const cols = Math.floor(w / 16) + 1;
+      const ypos = Array(cols).fill(0);
+      const chars = '01░▒▓█▲▼◆○•<>/\\*+-=@#$%&?ABCDEFGHIJKLMNOPQRSTUVWXZYabcdefghijklmnopqrstuvwxyz';
+
+      function resize(){
+        w = canvas.width = innerWidth; h = canvas.height = innerHeight;
+      }
+      addEventListener('resize', resize);
+
+      function draw(){
+        // semi-transparent fill to create trail effect
+        ctx.fillStyle = 'rgba(26,0,38,0.25)';
+        ctx.fillRect(0,0,w,h);
+
+        ctx.fillStyle = 'rgba(110,240,255,0.85)'; // neon-ish char color
+        ctx.font = '14px monospace';
+
+        for(let i=0;i<ypos.length;i++){
+          const text = chars.charAt(Math.floor(Math.random() * chars.length));
+          const x = i * 16;
+          const y = ypos[i] * 16;
+
+          // brighter leading char
+          ctx.fillStyle = 'rgba(168,255,251,' + (0.6 + Math.random()*0.4) + ')';
+          ctx.fillText(text, x, y);
+
+          ypos[i] = (ypos[i] > 100 + Math.random() * 100) ? 0 : ypos[i] + 1;
+        }
+        requestAnimationFrame(draw);
+      }
+
+      // initial clear
+      ctx.fillStyle = 'rgba(26,0,38,1)';
+      ctx.fillRect(0,0,w,h);
+      draw();
+    })();
+  </script>
+</body>
+</html>
